@@ -6,9 +6,22 @@ class CurrencyConverter
     @currency_code_hash = currency_code_hash
   end
 
+  def currency_code_hash
+    @currency_code_hash
+  end
+
   def convert(a_currency, a_currency_code)
-    raise DifferentCurrencyCodeError if a_currency.currency_code != a_currency_code
-    Currency.new(a_currency.amount, a_currency_code)
+    if a_currency.currency_code == a_currency_code
+      Currency.new(a_currency.amount, a_currency_code)
+    elsif (currency_code_hash.has_key? a_currency.currency_code) &&
+          (currency_code_hash.has_key? a_currency_code)
+      new_currency_amount = a_currency.amount * (currency_code_hash[a_currency.currency_code] / currency_code_hash[a_currency_code])
+      Currency.new(new_currency_amount, a_currency_code)
+    else
+      puts "currency codes not available"
+      return nil
+    end
+
   end
 
 end
