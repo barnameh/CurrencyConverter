@@ -1,4 +1,5 @@
 require_relative 'currency'
+require_relative 'unknown_currency_code_error'
 
 class CurrencyConverter
 
@@ -18,10 +19,8 @@ class CurrencyConverter
       new_currency_amount = a_currency.amount * (currency_code_hash[a_currency.currency_code] / currency_code_hash[a_currency_code])
       Currency.new(new_currency_amount, a_currency_code)
     else
-      puts "currency codes not available"
-      return nil
+      raise UnknownCurrencyCodeError
     end
-
   end
 
 end
