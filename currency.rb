@@ -3,9 +3,27 @@ require_relative 'currency_multiplation_error'
 
 class Currency
 
-  def initialize(amount, currency_code)
-    @amount = amount
-    @currency_code = currency_code
+  @@currency_symbols_hash = {"$" => "USD", "€" => "EUR", "¥" => "JPY", "£" => "GBP"}
+
+  def initialize(*args)
+    if args.size == 2
+      raise ArgumentError if !((args[0].instance_of? Fixnum) || (args[0].instance_of? Float))
+      @amount = args[0]
+      raise ArgumentError if !args[1].instance_of? String
+      @currency_code = args[1]
+    elsif args.size == 1
+      # currency symbol is embedded in the ammount (like "$1.20" or "€ 7.00")
+      raise ArgumentError if !args[0].instance_of? String
+      # first get the currency symbol
+      currency_symbol = args[0].chr
+      raise ArgumentError if !(@@currency_symbols_hash.has_key?(currency_symbol))
+      @currency_code = @@currency_symbols_hash[currency_symbol]
+      # now get the amount
+      amount_arg_string = args[0].slice(1, args[0].size - 1)
+      @amount = amount_arg_string.to_f
+    else
+      raise ArgumentError
+    end
   end
 
   def amount
